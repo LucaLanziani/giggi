@@ -15,5 +15,13 @@
   "bugs": {
     "url": "https://github.com/LucaLanziani/giggi/issues"
   },
-  "homepage": "https://github.com/LucaLanziani/giggi#readme"
+  "homepage": "https://github.com/LucaLanziani/giggi#readme",
+  "dependencies": {
+    "commander": "git@github.com:LucaLanziani/commander.js.git",
+    "jsondatastore": "git+https://github.com/LucaLanziani/jsonstore.git",
+    "simple-git": "^1.107.0"
+  },
+  "devDependencies": {
+    "prettier": "1.15.3"
+  }
 }
