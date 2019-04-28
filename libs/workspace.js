@@ -33,8 +33,14 @@ function setDefault (workspace) {
   }
 }
 
-function cmd (workspace) {
-  forEachRepo(workspace, )
+function fetch(workspace) {
+  forEachRepo(workspace, async (repoName, workspace) => {
+    await repo.fetch(repoName, workspace);
+  });
+}
+
+function remove (workspace) {
+  return datastore.unset(`workspaces.${workspace}`).save();
 }
 
 async function tmux (workspace) {
@@ -52,5 +58,7 @@ async function tmux (workspace) {
 module.exports = {
   list,
   status,
-  setDefault
+  setDefault,
+  fetch,
+  remove
 }
