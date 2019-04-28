@@ -12,8 +12,10 @@ Using giggi you can group git repositories in workspaces and run git commands on
 npm install -g giggi
 ```
 
+You can run it with `giggi` or `git gg`:
+
 ```
-> $ giggi
+> $ git gg
 Usage: giggi [options] [command]
 
 Options:

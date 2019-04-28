@@ -1,7 +1,7 @@
 {
   "name": "giggi",
   "version": "0.3.0",
-  "description": "",
+  "description": "Add workspace concept to git",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,7 +10,7 @@
     "giggi": "index.js",
     "git-gg": "index.js"
   },
-  "author": "",
+  "author": "Luca Lanziani (luca@lanziani.com)",
   "license": "ISC",
   "repository": {
     "type": "git",
@@ -22,12 +22,16 @@
   "homepage": "https://github.com/LucaLanziani/giggi#readme",
   "dependencies": {
     "chalk": "^2.4.2",
-    "commander": "git@github.com:LucaLanziani/commander.js.git",
+    "commander": "git+ssh://git@github.com/LucaLanziani/commander.js.git",
     "jsondatastore": "git+https://github.com/LucaLanziani/jsonstore.git",
     "simple-git": "^1.107.0",
     "slugify": "^1.3.4"
   },
   "devDependencies": {
     "prettier": "1.15.3"
-  }
+  },
+  "keywords": [
+    "git",
+    "workspace"
+  ]
 }
