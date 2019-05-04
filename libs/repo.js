@@ -12,9 +12,11 @@ slugify.extend({ ".": "-" });
 
 function list(workspace) {
   workspace = workspace || datastore.get("config.defaultWorkspace");
-  console.log(`${chalk.white("Workspace:")} ${chalk.blueBright(workspace)}\n`);
+  console.log(`Workspace: ${chalk.blueBright(workspace)}\n`);
   console.log(
     Object.keys(datastore.get(`workspaces.${workspace}.repos`) || {})
+      .map((repoName) => `  - ${chalk.yellow(repoName)} (${chalk.green(_getValue(workspace, repoName, 'path'))})`)
+      .join(`\n`)
   );
 }
 
@@ -33,18 +35,15 @@ async function add(repoPath, workspace, repoName) {
   }
 
   if (datastore.get(`workspaces.${workspace}.repos.${repoName}`)) {
-    console.error(`${repoName} name already defined in ${workspace} workspace`);
-    console.error(
-      `${repoName} -> ${datastore.get(
-        `workspaces.${workspace}.repos.${repoName}.path`
-      )}`
-    );
-    process.exit(1);
+    console.error(`${chalk.yellow(repoName)} already defined in ${chalk.blueBright(workspace)} workspace`);
+    return false;
   }
 
   datastore
     .set(`workspaces.${workspace}.repos.${repoName}`, { path: absolutePath })
     .save();
+  console.log(`${chalk.yellow(repoName)} (${chalk.green(absolutePath)}) added to ${chalk.blueBright(workspace)}`);
+  return true;
 }
 
 function remove(repo, workspace) {
@@ -105,7 +104,7 @@ async function getStatus(repo, workspace) {
     console.error(
       `Something went wrong trying to read the status of ${repo} (${r.path})`
     );
-    console.error(err);
+    return "";
   }
 }
 

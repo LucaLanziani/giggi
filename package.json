@@ -22,9 +22,9 @@
   "homepage": "https://github.com/LucaLanziani/giggi#readme",
   "dependencies": {
     "chalk": "^2.4.2",
-    "commander": "git+ssh://git@github.com/LucaLanziani/commander.js.git",
+    "commander": "^2.20.0",
     "jsondatastore": "git+https://github.com/LucaLanziani/jsonstore.git",
-    "simple-git": "^1.107.0",
+    "simple-git": "^1.110.0",
     "slugify": "^1.3.4"
   },
   "devDependencies": {
