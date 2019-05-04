@@ -29,6 +29,12 @@ program
   .action(workspace.status);
 
 program
+  .command('worspace-from-dir <directory> [workspace]')
+  .description('create a workspace from the given directory, all repo in the directory are added to the workspace')
+  .alias('wfd')
+  .action(workspace.workspaceFromDir);
+
+program
   .command('workspace-fetch [workspace]')
   .description('run fetch on all repos in the workspace')
   .alias('wf')

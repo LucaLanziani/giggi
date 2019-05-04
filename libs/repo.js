@@ -10,6 +10,10 @@ const child_process = require("child_process");
 
 slugify.extend({ ".": "-" });
 
+function _getValue(workspace, repo, property) {
+  return datastore.get(`workspaces.${workspace}.repos.${repo}.${property}`)
+}
+
 function list(workspace) {
   workspace = workspace || datastore.get("config.defaultWorkspace");
   console.log(`Workspace: ${chalk.blueBright(workspace)}\n`);
@@ -21,18 +25,22 @@ function list(workspace) {
 }
 
 async function add(repoPath, workspace, repoName) {
-  let absolutePath = path.resolve(repoPath);
+  let absoluteDirPath = path.resolve(repoPath);
 
-  if (!utils.dirExist(absolutePath)) {
-    return;
+  if (!utils.dirExist(absoluteDirPath)) {
+    return false;
   }
 
+  let absolutePath = await simpleGit(absoluteDirPath).raw(['rev-parse', '--show-toplevel']);
+  
+  if (absolutePath === null) {
+    console.error(`${absolutePath} is not a git repo`);
+    return false;
+  }
+
+  absolutePath = absolutePath.trim();
   repoName = slugify(repoName || absolutePath.split(path.sep).pop());
   workspace = workspace || datastore.get("config.defaultWorkspace");
-  if (!(await simpleGit(absolutePath).checkIsRepo())) {
-    console.error(`${absolutePath} is not a git repo`);
-    return;
-  }
 
   if (datastore.get(`workspaces.${workspace}.repos.${repoName}`)) {
     console.error(`${chalk.yellow(repoName)} already defined in ${chalk.blueBright(workspace)} workspace`);
@@ -87,6 +95,7 @@ async function getStatus(repo, workspace) {
   try {
     let git = await getSimpleGit(repo, workspace);
     let status = await git.status();
+    let branches = await git.branch();
     let trackingString = utils.formatTrackingString(
       status.current,
       status.tracking
@@ -94,12 +103,10 @@ async function getStatus(repo, workspace) {
     let unstagedString = utils.formatUnstagedString(status);
     let stagedString = utils.formatStagedString(status);
     let { aheadString, behindString } = utils.formatAheadBehind(status);
-
+    let numberOfBranches = `${branches.all.length}`.padStart(3);
     return `${chalk.green(
       r.path
-    )}\n\t[${aheadString}/${behindString}] - ${unstagedString} ${stagedString} - ${
-      status.current
-    } <=> ${trackingString}`;
+    )}\n\t[${aheadString}/${behindString}] - ${unstagedString} ${stagedString} - ${numberOfBranches} branches - ${status.current} <=> ${trackingString}`;
   } catch (err) {
     console.error(
       `Something went wrong trying to read the status of ${repo} (${r.path})`
