@@ -1,18 +1,9 @@
 const os = require('os');
 const path = require('path');
-const jsondatastore = require('jsondatastore').DB;
-
-const defaults = {
-    version: 2,
-    workspaces: {
-        default: {}
-    },
-    config: {
-        defaultWorkspace: 'default'
-    }
-}
-
-const datastore = new jsondatastore(path.join(os.homedir(), '.giggi.json'), defaults);
+const jsondatastore = require('jds').DB;
+const defaults = require('./config_defaults.js');
+const datastore_path = path.join(os.homedir(), '.giggi.json');
+const datastore = new jsondatastore(defaults, datastore_path);
 
 if (datastore.get('version') === 1) {
     datastore

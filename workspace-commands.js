@@ -1,41 +1,53 @@
 #!/usr/bin/env node
 'use strict'
 
-const program = require('commander');
-const workspace = require('./libs/workspace.js');
+const yargs = require('yargs'); 
+const workspace = require('./libs/workspace.js'); 
 
-program
-  .command('workspace-list')
-  .description('list workspaces')
-  .alias('wl')
-  .action(workspace.list);
+yargs
+  .command({
+    command: 'workspace-list',
+    desc: 'list workspaces',
+    aliases: 'wl',
+    handler: workspace.list
+  });
 
-program
-  .command('workspace-set-default <workspace>')
-  .description('set default workspace')
-  .alias('wsd')
-  .action(workspace.setDefault);
+yargs
+  .command({
+    command: 'workspace-set-default <workspace>', 
+    desc: 'set default workspace', 
+    aliases: 'wsd', 
+    handler: workspace.setDefault
+  }); 
 
-program
-  .command('workspace-remove')
-  .description('remove the workspace')
-  .alias('wr')
-  .action(workspace.remove);
+yargs
+  .command({
+    command: 'workspace-remove', 
+    desc: 'remove the workspace', 
+    aliases: 'wr', 
+    handler: workspace.remove
+  }); 
 
-program
-  .command('workspace-status [workspace]')
-  .description('get status of all repos in the workspace')
-  .alias('ws')
-  .action(workspace.status);
+yargs
+  .command({
+    command: 'workspace-status [workspace]', 
+    desc: 'get status of all repos in the workspace', 
+    aliases: 'ws', 
+    handler: workspace.status
+  }); 
 
-program
-  .command('worspace-from-dir <directory> [workspace]')
-  .description('create a workspace from the given directory, all repo in the directory are added to the workspace')
-  .alias('wfd')
-  .action(workspace.workspaceFromDir);
+yargs
+  .command({
+    command: 'workspace-from-dir <directory> [workspace]', 
+    desc: 'create a workspace from the given directory, all repo in the directory are added to the workspace', 
+    aliases: 'wfd', 
+    handler: workspace.workspaceFromDir
+  }); 
 
-program
-  .command('workspace-fetch [workspace]')
-  .description('run fetch on all repos in the workspace')
-  .alias('wf')
-  .action(workspace.fetch);
+yargs
+  .command({
+    command: 'workspace-fetch [workspace]', 
+    desc: 'run fetch on all repos in the workspace', 
+    aliases: 'wf', 
+    handler: workspace.fetch
+  }); 

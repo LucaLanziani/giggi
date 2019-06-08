@@ -13,9 +13,12 @@ async function forEachRepo(workspace, fn) {
   }
 }
 
-async function status (workspace, cmd) {
-  forEachRepo(workspace, async (repoName, workspace) => {
-    result = await repo.getStatus(repoName, workspace);
+async function status (argv) {
+  argv = argv || {};
+  let workspace = argv.workspace;
+
+  await forEachRepo(workspace, async (repoName, workspace) => {
+    result = await repo.getStatus({repo: repoName, workspace});
     if (result) {
       console.log(result);
     }
@@ -23,7 +26,8 @@ async function status (workspace, cmd) {
 }
 
 
-async function workspaceFromDir (directory, workspace) {
+async function workspaceFromDir (argv) {
+  let {directory, workspace} = argv;
   let absolutePath = resolve(directory);
   const isDirectory = source => lstatSync(source).isDirectory();
   const isGitRepo = source => existsSync(join(source, '.git')) && lstatSync(join(source, '.git')).isDirectory();
@@ -34,7 +38,7 @@ async function workspaceFromDir (directory, workspace) {
       .map(name => join(absolutePath, name))
       .filter(isDirectory)
       .filter(isGitRepo)
-      .map(repoPath => repo.add(repoPath, workspaceName)));
+      .map(repoPath => repo.add({repoPath, workspace: workspaceName})));
 
     if (result.length === 0 || ! result.reduce((prev, next,) => prev && next, true)) {
       console.error(chalk.red(`No repo added to ${chalk.blueBright(workspaceName)}`));
@@ -43,20 +47,24 @@ async function workspaceFromDir (directory, workspace) {
 }
 
 function _numberOfRepos (workspace) {
-  return Object.keys(datastore.get(`workspaces.${workspace}.repos`)).length
+  return Object.keys(datastore.get(`workspaces.${workspace}.repos`, {})).length;
 }
 
 function list () {
   let workspaces = Object.keys(datastore.get('workspaces'));
   let defaultWorkspace = datastore.get('config.defaultWorkspace');
-
   workspaces.forEach(workspace => {
-    console.log(chalk.blueBright(workspace), `(${_numberOfRepos(workspace)})`);
+    let isDefault = "";
+    if (workspace === defaultWorkspace) {
+      isDefault = "*";
+    }
+    console.log(`${chalk.blueBright(workspace)}${isDefault}`, `(${_numberOfRepos(workspace)})`);
   });
-  
 }
 
-function setDefault (workspace) {
+function setDefault (argv) {
+  let workspace = argv.workspace;
+
   if (Object.keys(datastore.get('workspaces')).includes(workspace)) {
     datastore.set('config.defaultWorkspace', workspace).save();
   } else {
@@ -64,13 +72,16 @@ function setDefault (workspace) {
   }
 }
 
-function fetch(workspace) {
-  forEachRepo(workspace, async (repoName, workspace) => {
-    await repo.fetch(repoName, workspace);
+async function fetch (argv) {
+  argv = argv || {};
+  let workspace = argv.workspace;
+  await forEachRepo(workspace, async (repoName, workspace) => {
+    await repo.fetch({repo: repoName, workspace});
   });
 }
 
-function remove (workspace) {
+function remove (argv) {
+  let workspace = argv.workspace;
   return datastore.unset(`workspaces.${workspace}`).save();
 }
 

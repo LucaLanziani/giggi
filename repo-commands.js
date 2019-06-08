@@ -1,43 +1,46 @@
 #!/usr/bin/env node
 'use strict'
 
-const program = require('commander');
+const yargs = require('yargs');
 const repo = require('./libs/repo.js');
 
+yargs
+  .command({
+    command: 'repo-list [workspace]',
+    desc: 'list all repos in a workspace',
+    aliases: ['rl'],
+    handler: repo.list
+  });
+    
+yargs
+  .command({
+    command: 'repo-add <directory> [workspace] [repoName]',
+    desc: 'add a repo to a workspace',
+    aliases: ['ra'],
+    handler: repo.add
+  });
 
-program
-  .command('repo-list [workspace]')
-  .description('list all repos in a workspace')
-  .alias('rl')
-  .action(repo.list);
+yargs
+  .command({
+    command: 'repo-update <repoName> <key> <value> [workspace]',
+    desc: 'update a property of a repo',
+    aliases: 'ru',
+    handler: repo.update
+  });
 
-program
-  .command('repo-add <directory> [workspace] [repoName]')
-  .description('add a repo to a workspace')
-  .alias('ra')
-  .action(repo.add);
+yargs
+  .command({
+    command: 'repo-status <repoName> [workspace]',
+    desc: 'get status of a repo',
+    aliases: 'rs',
+    handler: repo.status
+  });
 
-program
-  .command("repo-remove <repoName> [workspace]")
-  .description('remove a repo from a workspace')
-  .alias("rr")
-  .action(repo.remove);
-
-program
-  .command('repo-update <repoName> <key> <value> [workspace]')
-  .description('update a property of a repo')
-  .alias('ru')
-  .action(repo.update);
-
-program
-  .command('repo-status <repoName> [workspace]')
-  .description('get status of a repo')
-  .alias('rs')
-  .action(repo.status);
-
-program
-  .command('repo-fetch <repoName> [workspace]')
-  .description('run fetch on a repo')
-  .alias('rf')
-  .action(repo.fetch);
+yargs
+  .command({
+    command: 'repo-fetch <repoName> [workspace]',
+    desc: 'run fetch on a repo',
+    aliases: 'rf',
+    handler: repo.fetch
+  });
 

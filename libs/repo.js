@@ -14,8 +14,8 @@ function _getValue(workspace, repo, property) {
   return datastore.get(`workspaces.${workspace}.repos.${repo}.${property}`)
 }
 
-function list(workspace) {
-  workspace = workspace || datastore.get("config.defaultWorkspace");
+function list(argv) {
+  let workspace = argv.workspace || datastore.get("config.defaultWorkspace");
   console.log(`Workspace: ${chalk.blueBright(workspace)}\n`);
   console.log(
     Object.keys(datastore.get(`workspaces.${workspace}.repos`) || {})
@@ -24,7 +24,8 @@ function list(workspace) {
   );
 }
 
-async function add(repoPath, workspace, repoName) {
+async function add(argv) {
+  let {repoPath, repoName, workspace } = argv;
   let absoluteDirPath = path.resolve(repoPath);
 
   if (!utils.dirExist(absoluteDirPath)) {
@@ -50,16 +51,21 @@ async function add(repoPath, workspace, repoName) {
   datastore
     .set(`workspaces.${workspace}.repos.${repoName}`, { path: absolutePath })
     .save();
+  console.error('here');
   console.log(`${chalk.yellow(repoName)} (${chalk.green(absolutePath)}) added to ${chalk.blueBright(workspace)}`);
   return true;
 }
 
-function remove(repo, workspace) {
+function remove (argv) {
+  let {workspace, repo} = argv;
+
   datastore.unset(`workspaces.${workspace}.repos.${repo}`).save();
 }
 
-function update(repo, key, value, workspace) {
-  workspace = workspace || datastore.get("config.defaultWorkspace");
+function update(argv) {
+  let {repo, key, value} = argv;
+  let workspace = argv.workspace || datastore.get("config.defaultWorkspace");
+
   if (key === "path") {
     value = path.resolve(repoPath);
   }
@@ -72,7 +78,8 @@ function update(repo, key, value, workspace) {
     .save();
 }
 
-async function getSimpleGit(repo, workspace) {
+async function getSimpleGit(argv) {
+  let { repo, workspace } = argv;
   workspace = workspace || datastore.get("config.defaultWorkspace");
   let r = datastore.get(`workspaces.${workspace}.repos.${repo}`, {});
 
@@ -88,12 +95,13 @@ async function getSimpleGit(repo, workspace) {
   }
 }
 
-async function getStatus(repo, workspace) {
+async function getStatus (argv) {
+  let {repo, workspace} = argv;
   workspace = workspace || datastore.get("config.defaultWorkspace");
   let r = datastore.get(`workspaces.${workspace}.repos.${repo}`, {});
 
   try {
-    let git = await getSimpleGit(repo, workspace);
+    let git = await getSimpleGit({repo, workspace});
     let status = await git.status();
     let branches = await git.branch();
     let trackingString = utils.formatTrackingString(
@@ -115,7 +123,8 @@ async function getStatus(repo, workspace) {
   }
 }
 
-async function fetch(repo, workspace) {
+async function fetch (argv) {
+  let { repo, workspace } = argv;
   workspace = workspace || datastore.get("config.defaultWorkspace");
   let r = datastore.get(`workspaces.${workspace}.repos.${repo}`, {});
   console.log(`\nfetching: ${chalk.green(r.path)}`);
@@ -128,8 +137,9 @@ async function fetch(repo, workspace) {
   }
 }
 
-async function status(repoName, workspace) {
-  console.log(await getStatus(repoName, workspace));
+async function status(argv) {
+  let {repoName, workspace} = argv;
+  console.log(await getStatus({repoName, workspace}));
 }
 
 async function cmd(repoName, workspace, command) {
