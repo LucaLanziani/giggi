@@ -57,7 +57,8 @@ async function add(argv) {
 }
 
 function remove (argv) {
-  let {workspace, repo} = argv;
+  let {repo} = argv;
+  let workspace = argv.workspace || datastore.get("config.defaultWorkspace");
 
   datastore.unset(`workspaces.${workspace}.repos.${repo}`).save();
 }
@@ -131,7 +132,7 @@ async function fetch (argv) {
   process.chdir(r.path);
   let git = child_process.spawnSync("git", ["fetch"], { stdio: "inherit" });
   if (git.status !== 0) {
-    console.log(
+    console.error(
       `${chalk.yellow(git.status)} ${chalk.red("failed to fetch: " + r.path)}`
     );
   }
