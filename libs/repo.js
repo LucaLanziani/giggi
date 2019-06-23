@@ -11,7 +11,7 @@ const child_process = require("child_process");
 slugify.extend({ ".": "-" });
 
 function _getValue(workspace, repo, property) {
-  return datastore.get(`workspaces.${workspace}.repos.${repo}.${property}`)
+  return datastore.get(`workspaces.${workspace}.repos.${repo}.${property}`);
 }
 
 function list(argv) {
@@ -19,21 +19,29 @@ function list(argv) {
   console.log(`Workspace: ${chalk.blueBright(workspace)}\n`);
   console.log(
     Object.keys(datastore.get(`workspaces.${workspace}.repos`) || {})
-      .map((repoName) => `  - ${chalk.yellow(repoName)} (${chalk.green(_getValue(workspace, repoName, 'path'))})`)
+      .map(
+        repoName =>
+          `  - ${chalk.yellow(repoName)} (${chalk.green(
+            _getValue(workspace, repoName, "path")
+          )})`
+      )
       .join(`\n`)
   );
 }
 
 async function add(argv) {
-  let {repoPath, repoName, workspace } = argv;
+  let { repoPath, repoName, workspace } = argv;
   let absoluteDirPath = path.resolve(repoPath);
 
   if (!utils.dirExist(absoluteDirPath)) {
     return false;
   }
 
-  let absolutePath = await simpleGit(absoluteDirPath).raw(['rev-parse', '--show-toplevel']);
-  
+  let absolutePath = await simpleGit(absoluteDirPath).raw([
+    "rev-parse",
+    "--show-toplevel"
+  ]);
+
   if (absolutePath === null) {
     console.error(`${absolutePath} is not a git repo`);
     return false;
@@ -44,27 +52,35 @@ async function add(argv) {
   workspace = workspace || datastore.get("config.defaultWorkspace");
 
   if (datastore.get(`workspaces.${workspace}.repos.${repoName}`)) {
-    console.error(`${chalk.yellow(repoName)} already defined in ${chalk.blueBright(workspace)} workspace`);
+    console.error(
+      `${chalk.yellow(repoName)} already defined in ${chalk.blueBright(
+        workspace
+      )} workspace`
+    );
     return false;
   }
 
   datastore
     .set(`workspaces.${workspace}.repos.${repoName}`, { path: absolutePath })
     .save();
-  console.error('here');
-  console.log(`${chalk.yellow(repoName)} (${chalk.green(absolutePath)}) added to ${chalk.blueBright(workspace)}`);
+
+  console.log(
+    `${chalk.yellow(repoName)} (${chalk.green(
+      absolutePath
+    )}) added to ${chalk.blueBright(workspace)}`
+  );
   return true;
 }
 
-function remove (argv) {
-  let {repo} = argv;
+function remove(argv) {
+  let { repo } = argv;
   let workspace = argv.workspace || datastore.get("config.defaultWorkspace");
 
   datastore.unset(`workspaces.${workspace}.repos.${repo}`).save();
 }
 
 function update(argv) {
-  let {repo, key, value} = argv;
+  let { repo, key, value } = argv;
   let workspace = argv.workspace || datastore.get("config.defaultWorkspace");
 
   if (key === "path") {
@@ -96,13 +112,13 @@ async function getSimpleGit(argv) {
   }
 }
 
-async function getStatus (argv) {
-  let {repo, workspace} = argv;
+async function getStatus(argv) {
+  let { repo, workspace } = argv;
   workspace = workspace || datastore.get("config.defaultWorkspace");
   let r = datastore.get(`workspaces.${workspace}.repos.${repo}`, {});
 
   try {
-    let git = await getSimpleGit({repo, workspace});
+    let git = await getSimpleGit({ repo, workspace });
     let status = await git.status();
     let branches = await git.branch();
     let trackingString = utils.formatTrackingString(
@@ -115,7 +131,9 @@ async function getStatus (argv) {
     let numberOfBranches = `${branches.all.length}`.padStart(3);
     return `${chalk.green(
       r.path
-    )}\n\t[${aheadString}/${behindString}] - ${unstagedString} ${stagedString} - ${numberOfBranches} branches - ${status.current} <=> ${trackingString}`;
+    )}\n\t[${aheadString}/${behindString}] - ${unstagedString} ${stagedString} - ${numberOfBranches} branches - ${
+      status.current
+    } <=> ${trackingString}`;
   } catch (err) {
     console.error(
       `Something went wrong trying to read the status of ${repo} (${r.path})`
@@ -124,7 +142,7 @@ async function getStatus (argv) {
   }
 }
 
-async function fetch (argv) {
+async function fetch(argv) {
   let { repo, workspace } = argv;
   workspace = workspace || datastore.get("config.defaultWorkspace");
   let r = datastore.get(`workspaces.${workspace}.repos.${repo}`, {});
@@ -139,8 +157,8 @@ async function fetch (argv) {
 }
 
 async function status(argv) {
-  let {repoName, workspace} = argv;
-  console.log(await getStatus({repoName, workspace}));
+  let { repoName, workspace } = argv;
+  console.log(await getStatus({ repoName, workspace }));
 }
 
 async function cmd(repoName, workspace, command) {
