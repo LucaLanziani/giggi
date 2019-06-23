@@ -85,4 +85,18 @@ test('worspace fetch', async () => {
     expect(spy_process_chdir).toHaveBeenCalled();
     expect(spy_spawnSync).toHaveBeenCalled();
     expect(spy_spawnSync.mock.calls.length).toBe(2);
-})
+});
+
+test('workspace rename', async () => {
+    await workspace.workspaceFromDir({directory: validWorkspace});
+    workspace.rename({prevName: 'validWorkspace', newName: 'newValidWorkspace'});
+
+    expect(datastore.get('workspaces.validWorkspace')).toBe(undefined);
+    expect(datastore.get('workspaces.newValidWorkspace')).not.toBe(undefined);
+    expect(console.log).toHaveBeenCalled();
+    console.log.mockReset();
+
+    workspace.rename({prevName: 'validWorkspace', newName: 'newValidWorkspace'});
+    expect(console.error).toHaveBeenCalled();
+    expect(console.log).not.toHaveBeenCalled();
+});

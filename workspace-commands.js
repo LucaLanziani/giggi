@@ -14,6 +14,14 @@ yargs
 
 yargs
   .command({
+    command: 'workspace-rename <prevName> <newName>',
+    desc: 'rename a workspace',
+    aliases: 'wr',
+    hander: workspace.rename
+  })
+
+yargs
+  .command({
     command: 'workspace-set-default <workspace>', 
     desc: 'set default workspace', 
     aliases: 'wsd', 
@@ -22,9 +30,9 @@ yargs
 
 yargs
   .command({
-    command: 'workspace-remove', 
-    desc: 'remove the workspace', 
-    aliases: 'wr', 
+    command: 'workspace-delete', 
+    desc: 'delete the workspace', 
+    aliases: 'wd', 
     handler: workspace.remove
   }); 
 

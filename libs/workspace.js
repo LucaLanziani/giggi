@@ -85,6 +85,25 @@ function remove (argv) {
   return datastore.unset(`workspaces.${workspace}`).save();
 }
 
+function rename (argv) {
+  let {prevName, newName} = argv;
+
+  if (_exists(newName)) {
+    return console.error(`Workspace ${newName} already present in the datastore`);
+  }
+
+  datastore.update(`workspaces`, function(workspaces) {
+    workspaces[newName] = workspaces[prevName];
+    delete workspaces[prevName];
+    return workspaces;
+  });
+  console.log(`Workspace ${prevName} renamed to ${newName}`);
+}
+
+function _exists(workspace) {
+  return (datastore.get(`workspaces.${workspace}`) !== undefined)
+}
+
 async function tmux (workspace) {
   workspace = workspace || datastore.get('config.defaultWorkspace');
   let repos = Object.keys(datastore.get(`workspaces.${workspace}.repos`, {}))
@@ -103,5 +122,6 @@ module.exports = {
   setDefault,
   fetch,
   remove,
+  rename,
   workspaceFromDir
 }
