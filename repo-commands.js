@@ -14,7 +14,7 @@ yargs
     
 yargs
   .command({
-    command: 'repo-add <directory> [workspace] [repoName]',
+    command: 'repo-add <repoPath> [workspace] [repoName]',
     desc: 'add a repo to a workspace',
     aliases: ['ra'],
     handler: repo.add
