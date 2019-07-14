@@ -1,6 +1,6 @@
 {
   "name": "giggi",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Add workspace concept to git",
   "main": "index.js",
   "scripts": {
