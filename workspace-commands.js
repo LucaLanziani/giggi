@@ -30,17 +30,17 @@ yargs
 
 yargs
   .command({
-    command: 'workspace-delete', 
-    desc: 'delete the workspace', 
-    aliases: 'wd', 
+    command: 'workspace-delete <workspace>',
+    desc: 'delete the workspace',
+    aliases: 'wd',
     handler: workspace.remove
   }); 
 
 yargs
   .command({
-    command: 'workspace-status [workspace]', 
-    desc: 'get status of all repos in the workspace', 
-    aliases: 'ws', 
+    command: 'workspace-status [workspace]',
+    desc: 'get status of all repos in the workspace',
+    aliases: 'ws',
     handler: workspace.status
   }); 
 

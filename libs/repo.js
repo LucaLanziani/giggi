@@ -73,14 +73,14 @@ async function add(argv) {
 }
 
 function remove(argv) {
-  let { repo } = argv;
+  let { repoName } = argv;
   let workspace = argv.workspace || datastore.get("config.defaultWorkspace");
 
-  datastore.unset(`workspaces.${workspace}.repos.${repo}`).save();
+  datastore.unset(`workspaces.${workspace}.repos.${repoName}`).save();
 }
 
 function update(argv) {
-  let { repo, key, value } = argv;
+  let { repoName, key, value } = argv;
   let workspace = argv.workspace || datastore.get("config.defaultWorkspace");
 
   if (key === "path") {
@@ -88,7 +88,7 @@ function update(argv) {
   }
 
   datastore
-    .update(`workspaces.${workspace}.repos.${repo}`, function(repo) {
+    .update(`workspaces.${workspace}.repos.${repoName}`, function(repo) {
       repo[key] = value;
       return repo;
     })

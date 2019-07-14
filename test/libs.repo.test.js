@@ -45,7 +45,7 @@ test('Repo add', async () => {
     expect(datastore.get('workspaces').default.repos).toHaveProperty('firstRepo.path')
 })
 
-test('Repo remove', async () => {
+test('Repo delete', async () => {
     await repo.add({
         repoPath: path.join(validWorkspace, 'firstRepo'),
         repoName: "firstRepo"

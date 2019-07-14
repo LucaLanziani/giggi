@@ -22,6 +22,14 @@ yargs
 
 yargs
   .command({
+    command: 'repo-delete <repoName> [workspace]',
+    desc: 'delete a repo from a workspace',
+    aliases: 'rd',
+    handler: repo.remove
+  })
+
+yargs
+  .command({
     command: 'repo-update <repoName> <key> <value> [workspace]',
     desc: 'update a property of a repo',
     aliases: 'ru',
